@@ -24,7 +24,14 @@ signal pivo : std_logic_vector(8 downto 0);
 
 signal terminado : std_logic := '0';
 signal mediana_temporaria : std_logic_vector(8 downto 0); 
+
+signal contador : std_logic_vector(8 downto 0);
 begin
+    process(pixel)
+    begin
+        vetor_nao_ordenado(contador) <= pixel;
+        contador <= contador +1;
+    end process;
     vetor_ordenado <= vetor_nao_ordenado;
     
     while pivo < tamanho loop
@@ -38,6 +45,7 @@ begin
         end if;
     end loop;
     mediana_temporaria <= (vetor((tamanho/2))+vetor((tamanho/2)-1))/2;
+    terminado<='1';
     process(calcular, terminado)
         begin
             if(calcular=='1' AND terminado=='1') then
