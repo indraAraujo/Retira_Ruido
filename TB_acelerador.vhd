@@ -37,10 +37,9 @@ begin
     process
         begin
             
-            
+            calc <= '0';
             px <= "00000000";                
             tmnh <= "1001"; -- 9
-            calc <= '0';
             
             wait for 10 ns;
                 --tmnh <= "0010"; -- 2
@@ -74,8 +73,8 @@ begin
                 --tmnh <= "1001"; -- 9
                 px <= "10001001";
                 
-            wait for 5 ns;
+            wait for 1 ns;
                 calc <= '1';
-            wait for 50 ns;   
+            wait for 100 ns;   
         end process;
 end behavior;
