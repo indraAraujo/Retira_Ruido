@@ -1,7 +1,12 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.std_logic_unsigned.all;
+
 use ieee.std_logic_arith.all;
+use ieee.std_logic_arith.UNSIGNED;
+
+use ieee.numeric_std.all;
+use ieee.NUMERIC_STD.UNSIGNED;
 
 entity TB_acelerador is
 end entity;
