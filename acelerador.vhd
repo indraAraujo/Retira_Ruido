@@ -38,6 +38,8 @@ signal tam_aux  : std.STANDARD.INTEGER := 0;
 signal contador : std.STANDARD.INTEGER := 0;--por algum motivo o contador ta começando com 1 mesmo declarando como 0
 
 signal print : std.STANDARD.INTEGER := 0;
+
+signal pivo_aux : std_logic_vector(8 downto 0);
 begin
     process(pixel)
     begin
