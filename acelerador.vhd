@@ -39,7 +39,7 @@ signal contador : std.STANDARD.INTEGER := 0;--por algum motivo o contador ta com
 
 signal print : std.STANDARD.INTEGER := 0;
 
-signal pivo_aux : std_logic_vector(8 downto 0);
+--signal pivo_aux : std_logic_vector(8 downto 0);
 begin
     process(pixel)
     begin
@@ -72,8 +72,8 @@ begin
                                 pivo <= 0;
                 end if;
                 if(pivo < tamanho and vetor_ordenado(pivo) < vetor_ordenado(pivo+1)) then
-                    pivo_aux <= pivo+1;
-                    pivo <= pivo_aux;
+                    pivo_aux <= std_logic_vector(to_unsigned(pivo+1, tamanho'length));
+                    pivo <= pivo+1;
                 end if;
             end if;
 
