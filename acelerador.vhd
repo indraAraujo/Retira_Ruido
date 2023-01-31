@@ -51,7 +51,7 @@ begin
         end if;
     end process;
 
-    process(calcular)
+    process(calcular, pivo)
         begin
             --vetor_ordenado <= vetor_nao_ordenado;-- o vetor odenado NÃO está recebendo os valores
             
@@ -62,20 +62,17 @@ begin
                 pivo_aux <= std_logic_vector(to_unsigned(pivo+1, tamanho'length));--transforma o pivo em std_logic para poder comparar
                 print <= 3;
                 tam_aux <= conv_integer(tamanho);
-            while tam_aux > pivo+1 loop -- não ta entrando no loop
                 
-                print <= 5;
-
-                if(vetor_ordenado(pivo) > vetor_ordenado(pivo+1)) then
-                    temporario <= vetor_ordenado(pivo);
-                    --vetor_ordenado(pivo) <= vetor_ordenado(pivo+1);
-                    --vetor_ordenado(pivo+1) <= temporario;
-                    pivo <= 0;
-                else 
-                    pivo <= pivo + 1;
+                ORDENAMENTO : if(pivo < tam_aux and vetor_ordenado(pivo) > vetor_ordenado(pivo+1)) generate
+                                temporario <= vetor_ordenado(pivo);
+                                vetor_ordenado(pivo) <= vetor_ordenado(pivo+1);
+                                vetor_ordenado(pivo+1) <= temporario;
+                                pivo <= 0;
+                              end generate;
+                if(pivo < tamanho and vetor_ordenado(pivo) < vetor_ordenado(pivo+1)) then
+                    pivo_aux <= pivo+1;
+                    pivo <= pivo_aux;
                 end if;
-
-            end loop;
             end if;
 
     end process;
