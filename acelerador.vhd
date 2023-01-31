@@ -64,13 +64,13 @@ begin
                 pivo_aux <= std_logic_vector(to_unsigned(pivo+1, tamanho'length));--transforma o pivo em std_logic para poder comparar
                 print <= 3;
                 tam_aux <= conv_integer(tamanho);
-                
-                ORDENAMENTO : if(pivo < tam_aux and vetor_ordenado(pivo) > vetor_ordenado(pivo+1)) generate
+
+                if(pivo < tam_aux and vetor_ordenado(pivo) > vetor_ordenado(pivo+1)) then
                                 temporario <= vetor_ordenado(pivo);
                                 vetor_ordenado(pivo) <= vetor_ordenado(pivo+1);
                                 vetor_ordenado(pivo+1) <= temporario;
                                 pivo <= 0;
-                              end generate;
+                end if;
                 if(pivo < tamanho and vetor_ordenado(pivo) < vetor_ordenado(pivo+1)) then
                     pivo_aux <= pivo+1;
                     pivo <= pivo_aux;
