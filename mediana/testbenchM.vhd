@@ -13,7 +13,7 @@ end entity;
 
 architecture behavior of testbenchOV is
 
-    component ordenarVetor is port (
+    component mediana is port (
         tamanho       : in std_logic_vector(3 downto 0); 
         calcular      : in std_logic;
         clock : in std_logic
@@ -26,7 +26,7 @@ architecture behavior of testbenchOV is
     signal med          : std_logic_vector(7 downto 0);
     signal clk          : std_logic:='0';
 begin
-    acel: ordenarVetor port map(
+    acel: mediana port map(
 		tamanho     => tmnh,
             clock           => clk,
             calcular    => calc);
@@ -38,9 +38,9 @@ begin
         begin
             calc <= '0';
             wait for 2 ns;
-            tmnh <= "1001"; -- 9
+            tmnh <= "0011"; 
             calc <= '1';
-            wait for 5000 ns;
+            wait for 50 ns;
                
                  
         end process;
