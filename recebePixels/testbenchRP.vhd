@@ -39,39 +39,39 @@ begin
     process
         begin
             
-            px <= "00000000";    
+            px <= "00000000";--0    
             pixEnv <= '0';   
             
             wait for 6 ns;
-                px <= "00000010";
+                px <= "00000010";--1
                 pixEnv <= '1';
             wait for 6 ns;
                 pixEnv <= '0';   
-                px <= "00000100";
+                px <= "00000100";--2
                pixEnv <= '1';
             wait for 6 ns;
                 pixEnv <= '0';   
-                px <= "00001000";
+                px <= "00001000";--3
                 pixEnv <= '1';
             wait for 6 ns;
                 pixEnv <= '0';   
-                px <= "00010000";
+                px <= "00010000";--4
                 pixEnv <= '1';
             wait for 6 ns;
                 pixEnv <= '0';   
-                px <= "00100010";
+                px <= "00100010";--5
                pixEnv <= '1';
             wait for 6 ns;
                 pixEnv <= '0';   
-                px <= "01000100";
+                px <= "01000100";--6
                pixEnv <= '1';
             wait for 6 ns;
                 pixEnv <= '0';   
-                px <= "10001000";
+                px <= "10001000";--7
                 pixEnv <= '1';
             wait for 6 ns;
                 pixEnv <= '0';   
-                px <= "10001001";
+                px <= "10001001";--8
                 pixEnv <= '1';
             wait for 60 ns;   
         end process;

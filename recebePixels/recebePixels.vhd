@@ -32,7 +32,7 @@ begin
                 if(pixel /= "UUUUUUUU") then
                     vetor_ordenado(contador) <= pixel;
                     contador <= contador + 1;
-                    if(contador > 8) then
+                    if(contador >= 8) then
                         contador <= 0;
                     end if;
                 end if;

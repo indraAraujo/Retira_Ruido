@@ -14,67 +14,116 @@ end entity;
 architecture behavior of TB_acelerador is
 
     component acelerador is port (
-        tamanho       : in std_logic_vector(3 downto 0); 
-        pixel         : in std_logic_vector(7 downto 0); 
-        calcular      : in std_logic;
-        mediana       : out std_logic_vector(7 downto 0));
+        enable_tamanho: in std_logic_vector(1 downto 0);--seleciona o bloco de codigo que deve funcionar 
+        --(01) = 3x3
+        --(10) = 5x5
+        --(11) = 9x9
+
+        clock               : in std_logic;
+        ack_pixelEnviado    : in std_logic;    -- Informa que há um novo pixel pronto
+
+        pixel         : in std_logic_vector(7 downto 0);--recebe o pixel do softw.(8 bits = 256) 
+        calcular      : in std_logic;                   --informa que todos os bits já foram enviados e pode iniciar o calculo
+        mediana       : out std_logic_vector(7 downto 0);--retorna a mediana
+        pronto        : out std_logic
+    );
     end component;
 
-    signal tmnh         : std_logic_vector(3 downto 0);
+    signal tmnh         : std_logic_vector(1 downto 0):="00";
+    signal clk          : std_logic:='0';
+    signal ack          : std_logic:='0';
     signal px           : std_logic_vector(7 downto 0); 
-    signal calc         : std_logic;
+    signal calc         : std_logic:='0';
     signal med          : std_logic_vector(7 downto 0);
+    signal prt          : std_logic;
+    signal i : std.STANDARD.INTEGER := 1;
 
 begin
     acel: acelerador port map(
-		tamanho     => tmnh,
+		enable_tamanho      => tmnh,
+        clock               => clk,
+        ack_pixelEnviado    => ack,
         pixel       => px,
         calcular    => calc,
-        mediana     => med);
+        mediana     => med,
+        pronto      => prt);
 
+    clk <= not clk after 1 ns;
+
+--process(prt)
+----begin
+------tmnh <= tmnh + "01"; -- Informa o tamanho do quadro = 3x3
+----end process;
+
+--process
+----begin
+------wait for 10 ns;
+------
+------while i <= 9 loop
+--------px <= std_logic_vector(to_unsigned(9-i, px'length));
+--------ack <= '1';
+----------wait for 1 ns;
+--------ack <= '0';
+--------i <= i + 1;
+----------wait for 2 ns;
+------end loop;
+--------calc <= '1';---- Informa que todos os pixels foram enviados
  
+----end process;
+    
+process
+begin
+ --Testando para 3x3:
+wait for 10 ns;
+tmnh <= "00";  --Informa o tamanho do quadro = 3x3
 
-    process
-        begin
-            
-            calc <= '0';
-            px <= "00000000";                
-            tmnh <= "1001"; -- 9
-            
-            wait for 10 ns;
-                --tmnh <= "0010"; -- 2
-                px <= "00000010";
-               
-            wait for 10 ns;
-                --tmnh <= "0011"; -- 3
-                px <= "00000100";
-               
-            wait for 10 ns;
-                --tmnh <= "0100"; -- 
-                px <= "00001000";
-            
-            wait for 10 ns;
-                --tmnh <= "0101"; -- 
-                px <= "00010000";
-           
-            wait for 10 ns;
-                --tmnh <= "0110"; -- 
-                px <= "00100010";
-               
-            wait for 10 ns;
-                --tmnh <= "0111"; -- 
-                px <= "01000100";
-               
-            wait for 10 ns;
-                --tmnh <= "1000"; -- 8
-                px <= "10001000";
-
-            wait for 10 ns;
-                --tmnh <= "1001"; -- 9
-                px <= "10001001";
-                
-            wait for 1 ns;
-                calc <= '1';
-            wait for 100 ns;   
-        end process;
+wait for 2 ns;
+px <= "10000000"; --1° pixel   --1° pixel
+ack <= '1';
+wait for 1 ns;
+ack <= '0';
+wait for 2 ns;
+px <= "01100000"; --2° pixel
+ack <= '1';
+wait for 1 ns;
+ack <= '0';
+wait for 2 ns;
+px <= "01110000"; --3° pixel
+ack <= '1';
+wait for 1 ns;
+ack <= '0';   
+wait for 2 ns;
+px <= "01111000"; --4° pixel   
+ack <= '1';
+wait for 1 ns;
+ack <= '0';
+wait for 2 ns;
+px <= "01111100"; --5° pixel   
+ack <= '1';
+wait for 1 ns;
+ack <= '0';
+wait for 2 ns;
+px <= "01111110"; --6° pixel   
+ack <= '1';
+wait for 1 ns;
+ack <= '0';   
+wait for 2 ns;
+px <= "01111111"; --7° pixel   
+ack <= '1';
+wait for 1 ns;
+ack <= '0';   
+wait for 2 ns;
+px <= "00111111"; --8° pixel   
+ack <= '1';
+wait for 1 ns;
+ack <= '0';
+wait for 2 ns;
+px <= "00011111"; --9° pixel   
+ack <= '1';
+wait for 1 ns;
+ack <= '0';
+wait for 5 ns;
+calc <= '1'; --Informa que todos os pixels foram enviados
+wait for 10000 ns;
+end process;
 end behavior;
