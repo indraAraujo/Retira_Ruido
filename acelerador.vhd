@@ -30,8 +30,7 @@ end entity;
 architecture behavior of acelerador is
 
 type vetor is array (0 to 8) of std_logic_vector(7 downto 0);
-signal vetor_nao_ordenado : vetor;                 -- Recebe todos os pixel
-signal vetor_ordenado     : vetor;                 -- Recebe os pixel na ordem certa
+signal vetor_3x3 : vetor;                 -- Recebe todos os pixel
 
 signal vet_aux_1 : std_logic_vector(7 downto 0);   -- Usado para ordenar o vetor
 signal vet_aux_2 : std_logic_vector(7 downto 0);   -- Usado para ordenar o vetor
@@ -56,7 +55,6 @@ begin
     -- Controle de tamanho do quadro
     process(enable_tamanho)
     begin
-        pronto <= '0';
         if(enable_tamanho = "00") then
             tam_aux <= 9;--3x3
             mediana_posic <= 4;--(tamanho*tamanho)/2); 3x3 = 9/2 = 4
@@ -76,15 +74,15 @@ begin
         --if rising_edge(clock) then
             if(ack_pixelEnviado='1') then
                 if(pixel /= "UUUUUUUU") then
-                    vetor_nao_ordenado(contador) <= pixel;
+                    vetor_3x3(contador) <= pixel;
                     contador <= contador + 1;
                     if(contador >= 8) then
                         contador <= 0;
                     end if;
                 end if;
             elsif(troca = '1') then 
-                vetor_nao_ordenado(pivo_2) <= vet_aux_2;
-                vetor_nao_ordenado(pivo_2+1) <= vet_aux_1;
+                vetor_3x3(pivo_2) <= vet_aux_2;
+                vetor_3x3(pivo_2+1) <= vet_aux_1;
             end if;
     --end if;
     end process;
@@ -94,30 +92,32 @@ begin
     process(clock)
     begin
         if(rising_edge(clock) and calcular='1') then
-            troca <= '0';
+            
             --print <= print + 1;
             if(pivo < tam_aux-1) then
-                if(vetor_nao_ordenado(pivo) > vetor_nao_ordenado(pivo+1)) then-- Se o 1° > 2° troca a posição
+                if(vetor_3x3(pivo) > vetor_3x3(pivo+1)) then-- Se o 1° > 2° troca a posição
                     troca <= '1';
                     pivo_2 <= pivo;
                     pivo <= 0;
                 else                                                           -- Se não, mantém
-                    vetor_ordenado(pivo) <= vet_aux_1;
-                    vetor_ordenado(pivo+1) <= vet_aux_2;
                     pivo <= pivo + 1;  
                 end if;
             else
                 terminado <= '1';
             end if;
 
+        else
+            troca <= '0';
         end if;
     end process;
 
-    process(pivo,calcular) --Coloca o proximo pixel num vetor auxiliar
+    process(pivo,calcular,clock) --Coloca o proximo pixel num vetor auxiliar
     begin
-        if(pivo < 8) then
-            vet_aux_1 <= vetor_nao_ordenado(pivo);
-            vet_aux_2 <= vetor_nao_ordenado(pivo+1);
+        if(falling_edge(clock)) then
+            if(pivo < 8) then
+                vet_aux_1 <= vetor_3x3(pivo);
+                vet_aux_2 <= vetor_3x3(pivo+1);
+            end if;
         end if;
     end process;
     -- Fim de Ordena vetor;
@@ -126,7 +126,7 @@ begin
     process(clock)
     begin
         if(rising_edge(clock) and terminado='1') then
-            mediana <= vetor_ordenado(mediana_posic);
+            mediana <= vetor_3x3(mediana_posic);
             pronto <= terminado;
         end if;
     end process;

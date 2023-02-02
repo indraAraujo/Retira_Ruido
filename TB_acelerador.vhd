@@ -37,6 +37,7 @@ architecture behavior of TB_acelerador is
     signal med          : std_logic_vector(7 downto 0);
     signal prt          : std_logic;
     signal i : std.STANDARD.INTEGER := 1;
+    signal t : std.STANDARD.INTEGER := 25;
 
 begin
     acel: acelerador port map(
@@ -48,82 +49,82 @@ begin
         mediana     => med,
         pronto      => prt);
 
-    clk <= not clk after 1 ns;
+    clk <= not clk after 500 ps;
 
---process(prt)
-----begin
-------tmnh <= tmnh + "01"; -- Informa o tamanho do quadro = 3x3
-----end process;
+    process(prt)
+    begin
+        tmnh <= tmnh + "01";     --Informa o tamanho do quadro = 3x3
+    end process;
 
---process
-----begin
-------wait for 10 ns;
-------
-------while i <= 9 loop
---------px <= std_logic_vector(to_unsigned(9-i, px'length));
---------ack <= '1';
-----------wait for 1 ns;
---------ack <= '0';
---------i <= i + 1;
-----------wait for 2 ns;
-------end loop;
---------calc <= '1';---- Informa que todos os pixels foram enviados
+    process
+    begin
+        wait for 10 ns;
+        
+        while i <= 9 loop-- 3x3
+            px <= std_logic_vector(to_unsigned(9-i, px'length));
+            ack <= '1';
+                wait for 1 ns;
+            ack <= '0';
+            i <= i + 1;
+                wait for 2 ns;
+        end loop;
+        calc <= '1';     --Informa que todos os pixels foram enviados
  
-----end process;
+    end process;
     
-process
-begin
- --Testando para 3x3:
-wait for 10 ns;
-tmnh <= "00";  --Informa o tamanho do quadro = 3x3
+--process
+--begin
+----Testando para 3x3:
+--wait for 10 ns;
+--tmnh <= "00";  --Informa o tamanho do quadro = 3x3
 
-wait for 2 ns;
-px <= "10000000"; --1° pixel   --1° pixel
-ack <= '1';
-wait for 1 ns;
-ack <= '0';
-wait for 2 ns;
-px <= "01100000"; --2° pixel
-ack <= '1';
-wait for 1 ns;
-ack <= '0';
-wait for 2 ns;
-px <= "01110000"; --3° pixel
-ack <= '1';
-wait for 1 ns;
-ack <= '0';   
-wait for 2 ns;
-px <= "01111000"; --4° pixel   
-ack <= '1';
-wait for 1 ns;
-ack <= '0';
-wait for 2 ns;
-px <= "01111100"; --5° pixel   
-ack <= '1';
-wait for 1 ns;
-ack <= '0';
-wait for 2 ns;
-px <= "01111110"; --6° pixel   
-ack <= '1';
-wait for 1 ns;
-ack <= '0';   
-wait for 2 ns;
-px <= "01111111"; --7° pixel   
-ack <= '1';
-wait for 1 ns;
-ack <= '0';   
-wait for 2 ns;
-px <= "00111111"; --8° pixel   
-ack <= '1';
-wait for 1 ns;
-ack <= '0';
-wait for 2 ns;
-px <= "00011111"; --9° pixel   
-ack <= '1';
-wait for 1 ns;
-ack <= '0';
-wait for 5 ns;
-calc <= '1'; --Informa que todos os pixels foram enviados
-wait for 10000 ns;
-end process;
+--wait for 2 ns;
+--px <= "10000000"; --1° pixel   --1° pixel
+--ack <= '1';
+--wait for 1 ns;
+--ack <= '0';
+--wait for 2 ns;
+--px <= "01100000"; --2° pixel
+--ack <= '1';
+--wait for 1 ns;
+--ack <= '0';
+--wait for 2 ns;
+--px <= "01110000"; --3° pixel
+--ack <= '1';
+--wait for 1 ns;
+--ack <= '0';   
+--wait for 2 ns;
+--px <= "01111000"; --4° pixel   
+--ack <= '1';
+--wait for 1 ns;
+--ack <= '0';
+--wait for 2 ns;
+--px <= "01111100"; --5° pixel   
+--ack <= '1';
+--wait for 1 ns;
+--ack <= '0';
+--wait for 2 ns;
+--px <= "01111110"; --6° pixel   
+--ack <= '1';
+--wait for 1 ns;
+--ack <= '0';   
+--wait for 2 ns;
+--px <= "01111111"; --7° pixel   
+--ack <= '1';
+--wait for 1 ns;
+--ack <= '0';   
+--wait for 2 ns;
+--px <= "00111111"; --8° pixel   
+--ack <= '1';
+--wait for 1 ns;
+--ack <= '0';
+--wait for 2 ns;
+--px <= "00011111"; --9° pixel   
+--ack <= '1';
+--wait for 1 ns;
+--ack <= '0';
+--wait for 5 ns;
+--calc <= '1'; --Informa que todos os pixels foram enviados
+--wait for 10000 ns;
+--end process;
 end behavior;
