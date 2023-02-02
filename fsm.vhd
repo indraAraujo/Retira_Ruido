@@ -76,8 +76,8 @@ begin
 		    next_state <= third;
 		when third =>
             next_state <= fourth;
-		end case;
-        when fourth =>
+		--end case;
+            when fourth =>
             next_state <= zero;
 		end case;
 end process;
