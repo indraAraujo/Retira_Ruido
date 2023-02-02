@@ -8,8 +8,6 @@ use ieee.NUMERIC_STD.unsigned;
 use ieee.std_logic_arith.all;
 use ieee.std_logic_arith.unsigned;
 
-
-
 entity acelerador is
 	port(
             enable_tamanho: in std_logic_vector(1 downto 0);--seleciona o bloco de codigo que deve funcionar 
@@ -18,29 +16,29 @@ entity acelerador is
                                                             --(11) = 9x9
 
             clock               : in std_logic;
-            ack_pixelEnviado    : in std_logic;    -- Informa que há um novo pixel pronto
+            ack_pixelEnviado    : in std_logic;             -- Informa que há um novo pixel pronto
 
             pixel         : in std_logic_vector(7 downto 0);--recebe o pixel do softw.(8 bits = 256) 
             calcular      : in std_logic;                   --informa que todos os bits já foram enviados e pode iniciar o calculo
             mediana       : out std_logic_vector(7 downto 0);--retorna a mediana
-            pronto        : out std_logic
+            pronto        : out std_logic                   -- Avisa que a mediana está pronta para leitura
 		);
 end entity;
 
 architecture behavior of acelerador is
 
-type vetor is array (0 to 8) of std_logic_vector(7 downto 0);
-signal vetor_3x3 : vetor;                 -- Recebe todos os pixel
+type vetor is array (0 to 80) of std_logic_vector(7 downto 0);
+signal vetor_nxn : vetor;                       -- Recebe todos os pixel
 
-signal vet_aux_1 : std_logic_vector(7 downto 0);   -- Usado para ordenar o vetor
-signal vet_aux_2 : std_logic_vector(7 downto 0);   -- Usado para ordenar o vetor
+signal vet_aux_1 : std_logic_vector(7 downto 0);-- Usado para ordenar o vetor
+signal vet_aux_2 : std_logic_vector(7 downto 0);-- Usado para ordenar o vetor
 
-signal pivo     : std.STANDARD.INTEGER := 0;            -- Usado para ordenar o vetor
-signal pivo_2   : std.STANDARD.INTEGER := 0;            -- Usado para ordenar o vetor
-signal contador : std.STANDARD.INTEGER := 0;        -- Index para receber os pixels
-signal troca    : std_logic := '0';                 -- Usado para identificar trocas no vetor
+signal pivo     : std.STANDARD.INTEGER := 0;    -- Usado para ordenar o vetor
+signal pivo_2   : std.STANDARD.INTEGER := 0;    -- Usado para ordenar o vetor
+signal contador : std.STANDARD.INTEGER := 0;    -- Index para receber os pixels
+signal troca    : std_logic := '0';             -- Usado para identificar trocas no vetor
 
-signal terminado : std_logic := '0';                -- Informa que o vetor já está ordenado
+signal terminado : std_logic := '0';            -- Informa que o vetor já está ordenado
 
 -- Usado para indexar o vetor
 signal tam_aux          : std.STANDARD.INTEGER := 0;
@@ -74,17 +72,17 @@ begin
         --if rising_edge(clock) then
             if(ack_pixelEnviado='1') then
                 if(pixel /= "UUUUUUUU") then
-                    vetor_3x3(contador) <= pixel;
+                    vetor_nxn(contador) <= pixel;
                     contador <= contador + 1;
-                    if(contador >= 8) then
+                    if(contador >= tam_aux-1) then
                         contador <= 0;
                     end if;
                 end if;
             elsif(troca = '1') then 
-                vetor_3x3(pivo_2) <= vet_aux_2;
-                vetor_3x3(pivo_2+1) <= vet_aux_1;
+                vetor_nxn(pivo_2) <= vet_aux_2;
+                vetor_nxn(pivo_2+1) <= vet_aux_1;
             end if;
-    --end if;
+        --end if;
     end process;
     -- Fim de Recebe pixels;
 
@@ -92,18 +90,22 @@ begin
     process(clock)
     begin
         if(rising_edge(clock) and calcular='1') then
-            
             --print <= print + 1;
+            terminado <= '0';
+
             if(pivo < tam_aux-1) then
-                if(vetor_3x3(pivo) > vetor_3x3(pivo+1)) then-- Se o 1° > 2° troca a posição
+                if(vetor_nxn(pivo) > vetor_nxn(pivo+1)) then-- Se o 1° > 2° troca a posição
                     troca <= '1';
                     pivo_2 <= pivo;
                     pivo <= 0;
-                else                                                           -- Se não, mantém
+                else                                        -- Se não, mantém
                     pivo <= pivo + 1;  
                 end if;
             else
                 terminado <= '1';
+                pivo <= 0;
+                pivo_2 <= 0;
+                
             end if;
 
         else
@@ -114,23 +116,24 @@ begin
     process(pivo,calcular,clock) --Coloca o proximo pixel num vetor auxiliar
     begin
         if(falling_edge(clock)) then
-            if(pivo < 8) then
-                vet_aux_1 <= vetor_3x3(pivo);
-                vet_aux_2 <= vetor_3x3(pivo+1);
+            if(pivo < tam_aux-1) then
+                vet_aux_1 <= vetor_nxn(pivo);
+                vet_aux_2 <= vetor_nxn(pivo+1);
             end if;
         end if;
     end process;
     -- Fim de Ordena vetor;
 
--- Envia a mediana
+    -- Envia a mediana
     process(clock)
     begin
         if(rising_edge(clock) and terminado='1') then
-            mediana <= vetor_3x3(mediana_posic);
-            pronto <= terminado;
+            mediana <= vetor_nxn(mediana_posic);
+            pronto <= '1';
+        else
+            pronto <= '0';
         end if;
     end process;
- -- Fim envia mediana
+    -- Fim envia mediana
 
 end behavior;
-	

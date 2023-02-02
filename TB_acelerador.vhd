@@ -37,7 +37,6 @@ architecture behavior of TB_acelerador is
     signal med          : std_logic_vector(7 downto 0);
     signal prt          : std_logic;
     signal i : std.STANDARD.INTEGER := 1;
-    signal t : std.STANDARD.INTEGER := 25;
 
 begin
     acel: acelerador port map(
@@ -51,16 +50,11 @@ begin
 
     clk <= not clk after 500 ps;
 
-    process(prt)
-    begin
-        tmnh <= tmnh + "01";     --Informa o tamanho do quadro = 3x3
-    end process;
-
     process
     begin
         wait for 10 ns;
         
-        while i <= 9 loop-- 3x3
+        while i <= 9 loop
             px <= std_logic_vector(to_unsigned(9-i, px'length));
             ack <= '1';
                 wait for 1 ns;
@@ -69,8 +63,42 @@ begin
                 wait for 2 ns;
         end loop;
         calc <= '1';     --Informa que todos os pixels foram enviados
+        wait for 167000 ps; -- Pior caso para 3x3 com clock de 500 ps;
+
+        calc <= '0';     --Informa que recebeu a mediana e não precisa mais calcular
+        i <= 1;         -- reinicia para enviar novos pixels
+        wait for 1 ns;  -- setup
+
+        while i <= 25 loop
+            tmnh <= "10";
+            px <= std_logic_vector(to_unsigned(25-i, px'length));
+            ack <= '1';
+                wait for 1 ns;
+            ack <= '0';
+            i <= i + 1;
+                wait for 2 ns;
+        end loop;
+        calc <= '1';     --Informa que todos os pixels foram enviados
+        wait for 2738500 ps; -- Pior caso para 5x5 com clock de 500 ps;
+
+        calc <= '0';     --Informa que recebeu a mediana e não precisa mais calcular
+        i <= 1;         -- reinicia para enviar novos pixels
+        wait for 1 ns;  -- setup
+
+        while i <= 81 loop
+            tmnh <= "11";
+            px <= std_logic_vector(to_unsigned(81-i, px'length));
+            ack <= '1';
+                wait for 1 ns;
+            ack <= '0';
+            i <= i + 1;
+                wait for 2 ns;
+        end loop;
+        calc <= '1';     --Informa que todos os pixels foram enviados
+        wait for 91904500 ps; -- Pior caso para 9x9 com clock de 500 ps;
  
     end process;
+    
     
 --process
 --begin
