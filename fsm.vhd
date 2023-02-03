@@ -2,7 +2,7 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.std_logic_unsigned.all;
 use ieee.std_logic_arith.all;
-entity memory_fsm is
+entity acelerador_fsm is
 	port(
             -- entradas do processador para a FSM
             requisicao_comeco  : in std_logic;
@@ -21,7 +21,7 @@ entity memory_fsm is
 		);
 end entity;
 
-architecture behavior of memory_fsm is
+architecture behavior of acelerador_fsm is
 type state_name is (zero, first, second, third, fourth); -- nome dos estados
 signal state, next_state : state_name;  -- tipo de dado dos estados
 begin
