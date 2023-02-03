@@ -17,7 +17,8 @@ entity acelerador_fsm is
             envio_mediana      : out std_logic;
             
             -- saída da FSM para o acelerador
-            calcular           : out std_logic
+            calcular           : out std_logic;
+            ack_pixelEnviado   : out std_logic
 		);
 end entity;
 
@@ -56,6 +57,7 @@ begin
             ack_acelerador   <= '1';   
             envio_mediana    <= '0'; 
             calcular         <= '1'; 
+            ack_pixelEnviado <= '1';
         when fourth =>
             permissao_comeco <= '0'; 
             ack_acelerador   <= '0';   
